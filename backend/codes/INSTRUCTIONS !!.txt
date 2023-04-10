@@ -1,0 +1,12 @@
+1. If you don't have numpy and scipy installed, install using
+pip install numpy
+pip install scipy
+
+2. the file dot.py converts a given image to dot then automatically creates sequence from line.py
+
+3. Let's say you have an image a.png in this folder. So to execute, run the following command from cmd in this folder:
+python dot.py a.png (Any threshold number between 1 - 10 preferably odd) > (Name of the file to save the gcodes into)
+Ex: 
+python dot.py a.png 7 > mango.gcode
+or 
+python dot.py a.png 5 > mango.txt

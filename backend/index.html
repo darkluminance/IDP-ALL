@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Drawing Robot</title>
+
+		<style>
+			/* display loading gif and hide webpage */
+			.modal {
+				display: none;
+				position: fixed;
+				z-index: 1000;
+				top: 0;
+				left: 0;
+				height: 100%;
+				width: 100%;
+				background: rgba(255, 255, 255, 0.8)
+					url('https://media.giphy.com/media/xTk9ZvMnbIiIew7IpW/giphy.gif') 50%
+					50% no-repeat;
+			}
+
+			/* prevent scrollbar from display during load */
+			body.loading {
+				overflow: hidden;
+			}
+
+			/* display the modal when loading class is added to body */
+			body.loading .modal {
+				display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Our HTML will go here-->
+		<div class="modal"></div>
+
+		<input type="file" id="fileInput" name="file" />
+		<img id="imageSrc" alt="No Image" />
+		<canvas id="imageCanvas"></canvas>
+		<button type="button" id="circlesButton" class="btn btn-primary">
+			Processing
+		</button>
+
+		<script type="text/javascript">
+			// Our JavaScript code will go here
+			document.body.classList.add('loading');
+
+			// previous code is here
+
+			let imgElement = document.getElementById('imageSrc');
+			let inputElement = document.getElementById('fileInput');
+			let img = null;
+
+			// previous code is here
+
+			inputElement.onchange = function () {
+				imgElement.src = URL.createObjectURL(event.target.files[0]);
+			};
+
+			// previous code is here
+
+			imgElement.onload = function () {
+				let image = cv.imread(imgElement);
+				img = image;
+				cv.imshow('imageCanvas', image);
+				//image.delete();
+			};
+
+			// previous code is here
+
+			// previous code is here
+
+			document.getElementById('circlesButton').onclick = function () {
+				this.disabled = true;
+				document.body.classList.add('loading');
+
+				// lineart creation code
+				cv.cvtColor(img, img, cv.COLOR_BGR2GRAY);
+				inverted = new cv.Mat();
+				cv.bitwise_not(img, inverted);
+				blurred = new cv.Mat();
+				let ksize = new cv.Size(13, 13);
+				cv.GaussianBlur(inverted, blurred, ksize, 0, 0, cv.BORDER_DEFAULT);
+				inv_blur = new cv.Mat();
+				cv.bitwise_not(blurred, inv_blur);
+				pencilsktch = new cv.Mat();
+				cv.divide(img, inv_blur, pencilsktch, (scale = 256.0));
+				cv.imshow('imageCanvas', pencilsktch);
+
+				inverted.delete();
+				blurred.delete();
+				inv_blur.delete();
+				pencilsktch.delete();
+				img.delete();
+
+				this.disabled = false;
+				document.body.classList.remove('loading');
+			};
+
+			// previous code is here
+
+			function onOpenCvReady() {
+				document.body.classList.remove('loading');
+			}
+		</script>
+		<script
+			async
+			src="opencv.js"
+			onload="onOpenCvReady();"
+			type="text/javascript"
+		></script>
+	</body>
+</html>
